@@ -23,12 +23,10 @@ const InviteMemberForm = () => {
   }
 
   // search member by email
-
-
   const inviteMember = (e) => {
     e.preventDefault();
-    //invite a member to this trip via their email via modal
 
+    //invite a member to this trip via their email via modal
     dispatch(addUserToTrip(tripId, inviteeEmail))
   };
 

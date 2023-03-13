@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react'; 
+import React, { useEffect, useState } from 'react'; 
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import TripCreateForm from '../TripCreateForm/TripCreateForm';
 import TripIndexItem from './TripIndexItem';
 import { closeModal } from '../../store/modal';
-import { getTrips, clearTripErrors, fetchUpcomingUserTrips} from '../../store/trips';
+import { getTrips, clearTripErrors, fetchUpcomingUserTrips, fetchPastUserTrips} from '../../store/trips';
 import './TripIndex.css';
 
 const TripIndex = () => {
@@ -12,6 +12,7 @@ const TripIndex = () => {
     const history = useHistory();
     const trips = useSelector(getTrips);
     const user = useSelector(state => state.session.user);
+    const [currentTrips, setCurrentTrips] = useState(true);
 
     if (!user) {
         // if (typeof window !== 'undefined') {
@@ -62,8 +63,12 @@ const TripIndex = () => {
                     'https://tripit-seeds.s3.amazonaws.com/stamps/stamp_45.png']
 
     useEffect(() => {
-        dispatch(fetchUpcomingUserTrips(user._id))
-    }, [dispatch, user._id]);
+        if(currentTrips)  {
+            dispatch(fetchUpcomingUserTrips(user._id));
+        } else {
+            dispatch(fetchPastUserTrips(user._id));
+        }
+    }, [dispatch, user._id, currentTrips]);
     
     // const EndTrip = () => {
     //     return (
@@ -112,7 +117,7 @@ const TripIndex = () => {
                     <div id='page'>
                         <div id='stamp-page-container'>
                             <div id='stamp-page-header'>
-                                <div className='div-placeholder'></div>
+                                <button className='trip-index-create-button' onClick={() => setCurrentTrips(!currentTrips)}>{currentTrips ? 'See Past Trips' : 'See Upcoming Trips'}</button>
                                 <h2 id="stamp-page-title">{user.name}'s Trips</h2>
                                 <button className='trip-index-create-button' onClick={showCreateTripForm} title="Create Trip">+</button>
                             </div>
